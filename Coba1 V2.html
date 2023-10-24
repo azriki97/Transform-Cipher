@@ -21,18 +21,27 @@
     <br>
     <h1 class="left-align">Ini adalah Transposisi Cipher</h1>
     <p class="left-align">Untuk hasilnya, klik tombol di bawah ini.</p>
+    <br><br>
+    <h3 class="left-align">Sampel : </h3>
+    <p class="left-align">Jika ingin menyalin teks ini</p>
+    <ul>
+        <li class="left-align">مرحبا بالعالم</li>
+        <li class="left-align">Halo Dunia</li>
+        <li class="left-align">こんにちは世界</li>
+        <li class="left-align">Hello World</li>
+    </ul>
 
     <script>
         // Fungsi untuk mengenkripsi pesan menggunakan cipher transposisi
-        function encryptTranspositionCipher(message, key) {
+        function Enkripsi_Tranposisi(Pesan, key) {
             // Menghapus karakter whitespace dari pesan
-            message = message.replace(/\s/g, "");
+            Pesan = Pesan.replace(/\s/g, "");
 
             // Menghitung panjang pesan
-            const messageLength = message.length;
+            const Panjang_Pesan = Pesan.length;
 
             // Menghitung jumlah baris yang dibutuhkan berdasarkan panjang pesan dan kunci
-            const numRows = Math.ceil(messageLength / key);
+            const numRows = Math.ceil(Panjang_Pesan / key);
 
             // Membuat matriks kosong untuk menampung pesan yang telah diacak
             const matrix = [];
@@ -43,8 +52,8 @@
             // Mengisi matriks dengan karakter dari pesan
             let rowIndex = 0;
             let colIndex = 0;
-            for (let i = 0; i < messageLength; i++) {
-                matrix[rowIndex][colIndex] = message[i];
+            for (let i = 0; i < Panjang_Pesan; i++) {
+                matrix[rowIndex][colIndex] = Pesan[i];
                 colIndex++;
                 if (colIndex === key) {
                     colIndex = 0;
@@ -53,25 +62,25 @@
             }
 
             // Mengambil karakter dari matriks dalam urutan yang sesuai dengan kunci
-            let encryptedMessage = "";
+            let Enkripsi_Pesan = "";
             for (let i = 0; i < key; i++) {
                 for (let j = 0; j < numRows; j++) {
                     if (matrix[j][i]) {
-                        encryptedMessage += matrix[j][i];
+                        Enkripsi_Pesan += matrix[j][i];
                     }
                 }
             }
 
-            return encryptedMessage;
+            return Enkripsi_Pesan;
         }
 
         // Fungsi untuk mendekripsi pesan yang telah dienkripsi dengan cipher transposisi
-        function decryptTranspositionCipher(encryptedMessage, key) {
+        function Dekripsi_Tranposisi(Enkripsi_Pesan, key) {
             // Menghitung jumlah karakter dalam pesan terenkripsi
-            const messageLength = encryptedMessage.length;
+            const Panjang_Pesan = Enkripsi_Pesan.length;
 
             // Menghitung jumlah baris yang dibutuhkan berdasarkan panjang pesan dan kunci
-            const numRows = Math.ceil(messageLength / key);
+            const numRows = Math.ceil(Panjang_Pesan / key);
 
             // Membuat matriks kosong untuk menampung pesan terenkripsi
             const matrix = [];
@@ -80,8 +89,8 @@
             }
 
             // Menghitung jumlah karakter dalam setiap baris
-            const charsPerRow = Math.floor(messageLength / numRows);
-            const extraChars = messageLength % numRows;
+            const charsPerRow = Math.floor(Panjang_Pesan / numRows);
+            const extraChars = Panjang_Pesan % numRows;
 
             // Menghitung kolom yang memiliki karakter ekstra
             const colsWithExtraChar = extraChars;
@@ -91,12 +100,12 @@
             for (let col = 0; col < key; col++) {
                 for (let row = 0; row < numRows; row++) {
                     if (row < colsWithExtraChar && col >= (colsWithExtraChar - extraChars)) {
-                        matrix[row][col] = encryptedMessage[charIndex];
+                        matrix[row][col] = Enkripsi_Pesan[charIndex];
                         charIndex++;
                     }
                     else {
                         if (col >= colsWithExtraChar) {
-                            matrix[row][col] = encryptedMessage[charIndex];
+                            matrix[row][col] = Enkripsi_Pesan[charIndex];
                             charIndex++;
                         }
                     }
@@ -104,16 +113,16 @@
             }
 
             // Mengambil karakter dari matriks dalam urutan yang sesuai dengan pesan asli
-            let decryptedMessage = "";
+            let Dekripsi_Pesan = "";
             for (let row = 0; row < numRows; row++) {
                 for (let col = 0; col < key; col++) {
                     if (matrix[row][col]) {
-                        decryptedMessage += matrix[row][col];
+                        Dekripsi_Pesan += matrix[row][col];
                     }
                 }
             }
 
-            return decryptedMessage;
+            return Dekripsi_Pesan;
         }
 
         // Fungsi untuk menampilkan pesan setelah pengguna mengklik tombol
@@ -121,13 +130,13 @@
             const plaintext = prompt("Masukkan pesan yang akan dienkripsi:");
             const key = parseInt(prompt("Masukkan kunci:"));
 
-            const encryptedText = encryptTranspositionCipher(plaintext, key);
-            const decryptedText = decryptTranspositionCipher(encryptedText, key);
+            const Enkripsi = Enkripsi_Tranposisi(plaintext, key);
+            const Dekripsi = Dekripsi_Tranposisi(Enkripsi, key);
 
-            const message = `Pesan asli: ${plaintext}-----Pesan terenkripsi: ${encryptedText}-----Pesan terdekripsi: ${decryptedText}`;
+            const Pesan = `Pesan asli: ${plaintext}----->>>Enkripsi : ${Enkripsi}>>>----->>>Dekripsi : ${Dekripsi}`;
             Swal.fire({
                 title: 'Hasil Enkripsi dan Dekripsi',
-                text: message,
+                text: Pesan,
                 icon: 'info'
             });
         }
