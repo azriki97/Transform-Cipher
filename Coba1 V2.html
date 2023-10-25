@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.7"></script>
+
+    <title>Tugas KIJ Cipher</title>
+
+    <style>
+        .Contoh {
+            font-size: 1em; /* Gunakan ukuran font relative */
+        }
+
+        h6, h3{
+            position: relative;
+            left: 50px;
+        }
+
+        .left-align {
+            margin-left: 20px; /* Sesuaikan dengan jumlah margin yang diinginkan */
+        }
+
+        .image-left {
+            float: left; /* Geser gambar ke kiri */
+            margin-right: 20px; /* Jarak kanan dari teks */
+            width: 100px; /* Ganti ukuran gambar sesuai kebutuhan */
+        }
+
+        .image-below-button {
+            border-radius: 12px;
+            border: 10px solid #a5a5a5;
+            margin-left: 30px;
+            clear: both; /* Memastikan bahwa gambar tampil di bawah elemen sebelumnya (button) */
+            margin-top: 20px; /* Jarak antara gambar dan tombol */
+            width: 500px;
+        }
+    </style>
+
+</head>
+<body>
+    <br>
+    <h1 class="left-align">Ini adalah Transposisi Cipher</h1>
+    <p class="left-align">Untuk hasilnya, klik tombol di bawah ini.</p>
+    <br><br>
+    <h2 class="left-align">Sampel : </h2>
+    <p class="left-align">Jika ingin menyalin teks ini</p>
+    <ul>
+        <li class="left-align">مرحبا بالعالم</li>
+        <li class="left-align">Halo Dunia</li>
+        <li class="left-align">こんにちは世界</li>
+        <li class="left-align">Hello World</li>
+        <li class="left-align">你好世界</li>
+        <li class="left-align">안녕 세계</li>
+        <li class="left-align">Привет, мир</li>
+    </ul>
+
+    <script>
+        // Fungsi untuk mengenkripsi pesan menggunakan cipher transposisi
+        function Enkripsi_Tranposisi(Pesan, key) {
+            // Menghapus karakter whitespace dari pesan
+            Pesan = Pesan.replace(/\s/g, "");
+
+            // Menghitung panjang pesan
+            const Panjang_Pesan = Pesan.length;
+
+            // Menghitung jumlah baris yang dibutuhkan berdasarkan panjang pesan dan kunci
+            const numRows = Math.ceil(Panjang_Pesan / key);
+
+            // Membuat matriks kosong untuk menampung pesan yang telah diacak
+            const matrix = [];
+            for (let i = 0; i < numRows; i++) {
+                matrix[i] = [];
+            }
+
+            // Mengisi matriks dengan karakter dari pesan
+            let rowIndex = 0;
+            let colIndex = 0;
+            for (let i = 0; i < Panjang_Pesan; i++) {
+                matrix[rowIndex][colIndex] = Pesan[i];
+                colIndex++;
+                if (colIndex === key) {
+                    colIndex = 0;
+                    rowIndex++;
+                }
+            }
+
+            // Mengambil karakter dari matriks dalam urutan yang sesuai dengan kunci
+            let Enkripsi_Pesan = "";
+            for (let i = 0; i < key; i++) {
+                for (let j = 0; j < numRows; j++) {
+                    if (matrix[j][i]) {
+                        Enkripsi_Pesan += matrix[j][i];
+                    }
+                }
+            }
+
+            return Enkripsi_Pesan;
+        }
+
+        // Fungsi untuk mendekripsi pesan yang telah dienkripsi dengan cipher transposisi
+        function Dekripsi_Tranposisi(Enkripsi_Pesan, key) {
+            // Menghitung jumlah karakter dalam pesan terenkripsi
+            const Panjang_Pesan = Enkripsi_Pesan.length;
+
+            // Menghitung jumlah baris yang dibutuhkan berdasarkan panjang pesan dan kunci
+            const numRows = Math.ceil(Panjang_Pesan / key);
+
+            // Membuat matriks kosong untuk menampung pesan terenkripsi
+            const matrix = [];
+            for (let i = 0; i < numRows; i++) {
+                matrix[i] = [];
+            }
+
+            // Menghitung jumlah karakter dalam setiap baris
+            const charsPerRow = Math.floor(Panjang_Pesan / numRows);
+            const extraChars = Panjang_Pesan % numRows;
+
+            // Menghitung kolom yang memiliki karakter ekstra
+            const colsWithExtraChar = extraChars;
+
+            // Mengisi matriks dengan karakter dari pesan terenkripsi
+            let charIndex = 0;
+            for (let col = 0; col < key; col++) {
+                for (let row = 0; row < numRows; row++) {
+                    if (row < colsWithExtraChar && col >= (colsWithExtraChar - extraChars)) {
+                        matrix[row][col] = Enkripsi_Pesan[charIndex];
+                        charIndex++;
+                    }
+                    else {
+                        if (col >= colsWithExtraChar) {
+                            matrix[row][col] = Enkripsi_Pesan[charIndex];
+                            charIndex++;
+                        }
+                    }
+                }
+            }
+
+            // Mengambil karakter dari matriks dalam urutan yang sesuai dengan pesan asli
+            let Dekripsi_Pesan = "";
+            for (let row = 0; row < numRows; row++) {
+                for (let col = 0; col < key; col++) {
+                    if (matrix[row][col]) {
+                        Dekripsi_Pesan += matrix[row][col];
+                    }
+                }
+            }
+
+            return Dekripsi_Pesan;
+        }
+
+        // Fungsi untuk menampilkan pesan setelah pengguna mengklik tombol
+        function showMessage() {
+            const plaintext = prompt("Masukkan pesan yang akan dienkripsi:");
+            const key = parseInt(prompt("Masukkan kunci:"));
+
+            const Enkripsi = Enkripsi_Tranposisi(plaintext, key);
+            const Dekripsi = Dekripsi_Tranposisi(Enkripsi, key);
+
+            const Pesan = `Pesan asli: ${plaintext}----->>>Enkripsi : ${Enkripsi}>>>----->>>Dekripsi : ${Dekripsi}`;
+            Swal.fire({
+                title: 'Hasil Enkripsi dan Dekripsi',
+                text: Pesan,
+                icon: 'info'
+            });
+        }
+
+    </script>
+
+    <button onclick="showMessage()", class="left-align">Klik untuk Enkripsi dan Dekripsi</button>
+    <br><br>
+    <div class="Contoh">
+        <h3>Pahami Contohnya : </h3>
+        <img src="Transposisi.jpeg" alt="Gambar Transposisi" class="image-below-button"><br>
+        <h6>Owned by - Alif Rizky(1203210068)</h6>
+
+    </div>
+</body>
+</html>
